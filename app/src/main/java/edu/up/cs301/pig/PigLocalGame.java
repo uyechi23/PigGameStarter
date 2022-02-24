@@ -7,6 +7,8 @@ import edu.up.cs301.game.infoMsg.GameState;
 
 import android.util.Log;
 
+import java.util.Random;
+
 // dummy comment, to see if commit and push work from srvegdahl account
 
 /**
@@ -17,11 +19,15 @@ import android.util.Log;
  */
 public class PigLocalGame extends LocalGame {
 
+    // a GameState object for this LocalGame
+    private PigGameState game;
+
     /**
      * This ctor creates a new game state
      */
     public PigLocalGame() {
-        //TODO  You will implement this constructor
+        // initialize the GameState
+        game = new PigGameState();
     }
 
     /**
@@ -29,8 +35,7 @@ public class PigLocalGame extends LocalGame {
      */
     @Override
     protected boolean canMove(int playerIdx) {
-        //TODO  You will implement this method
-        return false;
+        return playerIdx == this.game.getId();
     }
 
     /**
@@ -40,8 +45,40 @@ public class PigLocalGame extends LocalGame {
      */
     @Override
     protected boolean makeMove(GameAction action) {
-        //TODO  You will implement this method
-        return false;
+        // if it's a hold action
+        if(action instanceof PigHoldAction){
+            // if the ID of the current player is 0, add running total to player 0
+            // same for player 1
+            if(this.game.getId() == 0){
+                this.game.setPlayer0Score(this.game.getPlayer0Score() + this.game.getRunningTotal());
+            }else{
+                this.game.setPlayer1Score(this.game.getPlayer1Score() + this.game.getRunningTotal());
+            }
+            // reset the running total
+            this.game.setRunningTotal(0);
+            // switch to next player if there's more than 1
+            if(this.players.length > 1) { this.game.setId((this.game.getId() + 1) % 2); }
+            // return true (valid move)
+            return true;
+        }else if(action instanceof PigRollAction){
+            // create a random object
+            Random random = new Random();
+            // make a roll
+            int diceRoll = (random.nextInt(6) + 1);
+            // if the dice roll is not 1, then add to running total
+            // if the dice roll is 1, then reset the running total and end player's turn
+            if(diceRoll != 1){
+                this.game.setRunningTotal(this.game.getRunningTotal() + diceRoll);
+            }else{
+                this.game.setRunningTotal(0);
+                if(this.players.length > 1) { this.game.setId((this.game.getId() + 1) % 2); }
+            }
+            // return true (valid move)
+            return true;
+        }else{
+            // return false (invalid move)
+            return false;
+        }
     }//makeMove
 
     /**
@@ -49,7 +86,10 @@ public class PigLocalGame extends LocalGame {
      */
     @Override
     protected void sendUpdatedStateTo(GamePlayer p) {
-        //TODO  You will implement this method
+        // copy the game state
+        PigGameState currState = new PigGameState(this.game);
+        // send info to player
+        p.sendInfo(currState);
     }//sendUpdatedSate
 
     /**
@@ -61,7 +101,12 @@ public class PigLocalGame extends LocalGame {
      */
     @Override
     protected String checkIfGameOver() {
-        //TODO  You will implement this method
+        if(this.game.getPlayer1Score() >= 50){
+            return "Winner: " + this.playerNames[1] + " with a score of " + this.game.getPlayer1Score();
+        }
+        if(this.game.getPlayer0Score() >= 50){
+            return "Winner: " + this.playerNames[0] + " with a score of " + this.game.getPlayer0Score();
+        }
         return null;
     }
 
