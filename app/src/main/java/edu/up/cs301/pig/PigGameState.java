@@ -10,6 +10,7 @@ public class PigGameState extends GameState {
     private int player1Score; // player 1's score
     private int runningTotal; // running total before HOLD is selected
     private int diceRoll; // the result of the most recent dice roll
+    private String message; // the message displayed to the user
 
     public PigGameState(){
         // set everything to 0
@@ -18,6 +19,7 @@ public class PigGameState extends GameState {
         this.player1Score = 0; // initial score 0
         this.runningTotal = 0; // running total should be 0
         this.diceRoll = 0; // the dice roll should not have a value yet
+        this.message = ""; // the message should be empty
     }
 
     public PigGameState(PigGameState orig){
@@ -27,6 +29,7 @@ public class PigGameState extends GameState {
         this.player1Score = orig.getPlayer1Score();
         this.runningTotal = orig.getRunningTotal();
         this.diceRoll = orig.getDiceRoll();
+        this.message = orig.getMessage();
     }
 
     // getter methods
@@ -35,6 +38,7 @@ public class PigGameState extends GameState {
     public int getPlayer1Score() { return this.player1Score; }
     public int getRunningTotal() { return this.runningTotal; }
     public int getDiceRoll() { return this.diceRoll; }
+    public String getMessage() { return this.message; }
 
     // setter methods
     public void setId(int id) { this.id = id; }
@@ -42,4 +46,5 @@ public class PigGameState extends GameState {
     public void setPlayer1Score(int score) { this.player1Score = score; }
     public void setRunningTotal(int total) { this.runningTotal = total; }
     public void setDiceRoll(int diceVal) { this.diceRoll = diceVal; }
+    public void setMessage(String message) { this.message = message; }
 }

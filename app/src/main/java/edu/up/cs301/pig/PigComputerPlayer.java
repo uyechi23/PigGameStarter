@@ -30,15 +30,25 @@ public class PigComputerPlayer extends GameComputerPlayer {
      */
     @Override
     protected void receiveInfo(GameInfo info) {
+        // sleep value - ms the computer should sleep for
+        int sleepFor = 500;
+
+        // typecast info into a PigGameState object
         PigGameState received = new PigGameState((PigGameState) info);
+
+        // if the ID of the gameState isn't equal to this player's ID, skip
         if(received.getId() != this.playerNum) return;
+
+        // Randomly choose between a hold action or a roll action (50-50)
         Random rand = new Random();
         int choice = rand.nextInt(2);
         if(choice == 0){
             PigHoldAction hold = new PigHoldAction(this);
+            this.sleep(sleepFor);
             this.game.sendAction(hold);
         }else{
             PigRollAction roll = new PigRollAction(this);
+            this.sleep(sleepFor);
             this.game.sendAction(roll);
         }
     }//receiveInfo

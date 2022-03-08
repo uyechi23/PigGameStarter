@@ -47,12 +47,16 @@ public class PigLocalGame extends LocalGame {
     protected boolean makeMove(GameAction action) {
         // if it's a hold action
         if(action instanceof PigHoldAction){
+            // Log action
+            Log.d("Player " + game.getId(), "HOLD");
             // if the ID of the current player is 0, add running total to player 0
             // same for player 1
             if(this.game.getId() == 0){
                 this.game.setPlayer0Score(this.game.getPlayer0Score() + this.game.getRunningTotal());
+                this.game.setMessage(this.playerNames[0] + " has added " + this.game.getRunningTotal() + " points to their score!");
             }else{
                 this.game.setPlayer1Score(this.game.getPlayer1Score() + this.game.getRunningTotal());
+                this.game.setMessage(this.playerNames[1] + " has added " + this.game.getRunningTotal() + " points to their score!");
             }
             // reset the running total
             this.game.setRunningTotal(0);
@@ -61,15 +65,23 @@ public class PigLocalGame extends LocalGame {
             // return true (valid move)
             return true;
         }else if(action instanceof PigRollAction){
+            // Log action
+            Log.d("Player " + game.getId(), "ROLL");
             // create a random object
             Random random = new Random();
+            // reset the game's dice roll to 0
+            game.setDiceRoll(0);
             // make a roll
             int diceRoll = (random.nextInt(6) + 1);
+            // set the game state's dice roll value to the dice roll
+            game.setDiceRoll(diceRoll);
             // if the dice roll is not 1, then add to running total
             // if the dice roll is 1, then reset the running total and end player's turn
             if(diceRoll != 1){
                 this.game.setRunningTotal(this.game.getRunningTotal() + diceRoll);
+                this.game.setMessage(this.playerNames[this.game.getId()] + " rolls successfully, adding " + diceRoll + " points to the running total!");
             }else{
+                this.game.setMessage("Oh no! " + this.playerNames[this.game.getId()] + " has landed a 1! They are forced to pass without earning any points.");
                 this.game.setRunningTotal(0);
                 if(this.players.length > 1) { this.game.setId((this.game.getId() + 1) % 2); }
             }
